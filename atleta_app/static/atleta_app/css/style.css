@@ -1,0 +1,275 @@
+/* Geral */
+body {
+    margin: 0;
+    font-family: Roboto, sans-serif;
+    color: #fff;
+    background-color: #000;
+}
+
+/* Cabeçalho */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.8);
+}
+
+header .logo img {
+    height: 50px;
+}
+
+header nav .btn {
+    display: inline-flex;
+    padding: 7px 48px 8px 48px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    background: #FFF;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+    color: #000;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 900;
+    margin-left: 10px;
+}
+
+/* Conteúdo principal */
+.home-container {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start; /* Posiciona no início horizontalmente */
+    align-items: flex-start; /* Posiciona no início verticalmente */
+    text-align: left; /* Texto alinhado à esquerda */
+    padding: 40px; /* Espaço ao redor do texto */
+}
+
+.home-container .background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("{% static 'atleta_app/images/background.png' %}") no-repeat center center/cover;
+    z-index: -1;
+}
+
+.home-container .content {
+    z-index: 1;
+    max-width: 600px;
+}
+
+.home-container h1 {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+
+.home-container p {
+    font-size: 18px;
+    font-weight: 300;
+    margin-top: 10px;
+}
+
+:root {
+    --spacing: 16px;
+    --default-border-radius: 8px;
+    --smaller-font-size: 14px;
+    --smallest-font-size: 12px;
+    --small-font-size: 16px;
+    --link-dark-color: #007bff;
+    --clr-white: #ffffff;
+    --transition-fast: 0.2s;
+}
+
+/* Mensagens */
+.message {
+    max-width: 600px;
+    margin: var(--spacing) auto;
+    margin-top: calc(var(--spacing) * 2);
+    padding: var(--spacing);
+    text-align: center;
+    border-radius: var(--default-border-radius);
+    font-size: var(--smaller-font-size);
+}
+
+.messages {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    position: fixed; /* Fixa a posição da mensagem na tela */
+    top: 50%; /* Coloca no meio da tela */
+    left: 50%; /* Coloca no meio da tela */
+    transform: translate(-50%, -50%); /* Ajusta para o centro exato */
+    z-index: 9999; /* Garante que fique acima de outros elementos */
+    width: 100%; /* Garante que a mensagem ocupe toda a largura disponível */
+}
+
+.message.success {
+    background: green; /* Fundo verde mais forte e opaco */
+    border: 1px solid rgba(0, 255, 0, 1); /* Borda verde mais forte */
+    color: white; /* Cor do texto em branco para maior contraste */
+    font-size: 1.5rem; /* Aumenta o tamanho da fonte */
+    font-weight: bold; /* Torna o texto mais forte */
+    padding: 1.5rem; /* Aumenta o padding para dar mais destaque */
+    border-radius: var(--default-border-radius);
+}
+
+.message.error {
+    background: rgba(255, 0, 0, 0.3);
+    border: 1px solid rgba(255, 0, 0, 90%);
+}
+
+.message.warning {
+    background: rgba(255, 255, 0, 0.3);
+    border: 1px solid rgba(255, 255, 0, 90%);
+}
+
+.message.info {
+    background: rgba(0, 0, 255, 0.3);
+    border: 1px solid rgba(0, 0, 255, 0.3);
+}
+
+/* Formulário */
+
+h1 {
+    text-align: center; 
+    font-size: 2rem; 
+    margin-bottom: 1rem; 
+    color: white; 
+}
+
+.form-wrapper {
+    max-width: 60rem;
+    margin: var(--spacing) auto;
+  }
+  
+  .form-content {
+    margin: var(--spacing) 0;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--spacing);
+  }
+  
+  .form-group p {
+    margin: 1em 0;
+  }
+  
+  .form-group .help-text,
+  .form-group .help-text ~ ul {
+    margin: 0;
+    font-size: var(--smallest-font-size);
+    list-style: none;
+  }
+  
+.form-group input,
+.form-group textarea,
+.form-group select {
+    padding: 1rem;
+    border-radius: var(--default-border-radius);
+    border: 1px solid var(--link-dark-color);
+    font-size: 1.2rem; 
+}
+  
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    box-shadow: 0 0 5px var(--link-dark-color);
+  }
+  
+  .form-group label {
+    font-size: 1.5rem; 
+    font-weight: bold;
+    color: yellow;
+}
+  
+  .btn {
+    background-color: var(--link-dark-color);
+    color: var(--clr-white);
+    font-weight: bold;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--default-border-radius);
+    cursor: pointer;
+    transition: filter var(--transition-fast) ease-in-out;
+  }
+  
+  .btn:hover {
+    filter: brightness(90%);
+  }
+  
+  .btn:focus,
+  .btn:active {
+    filter: brightness(80%);
+    box-shadow: 0 0 5px var(--link-dark-color);
+  }
+
+  .btn-link {
+    font-size: var(--small-font-size);
+    text-decoration: none;
+    font-weight: bold;
+    padding: 1rem;
+    display: block;
+    line-height: var(--small-font-size);
+  }
+
+
+  .responsive-table {
+    width: 100%;
+    overflow-x: auto;
+  }
+  
+  .atleta-table {
+    width: 100%;
+    min-width: var(--table-min-width);
+    border-collapse: collapse;
+    background-color: #ffffff; /* Fundo branco para a tabela */
+    color: #333333; /* Cor do texto */
+}
+
+/* Títulos da tabela (cabeçalhos) */
+.table-header {
+    background-color: #007bff; /* Azul para os cabeçalhos */
+    color: #ffffff; /* Texto branco nos cabeçalhos */
+    font-weight: bold;
+    padding: var(--spacing);
+}
+
+/* Cor das linhas da tabela */
+.table-row:nth-of-type(2n) {
+    background-color: #f1faff; /* Azul claro para as linhas pares */
+}
+
+.table-row:not(.table-row-header):hover {
+    background-color: #cce5ff; /* Azul mais escuro ao passar o mouse */
+}
+
+/* Linha de cabeçalho */
+.table-row-header {
+    background-color: #0056b3; /* Azul escuro para a linha de cabeçalho */
+    color: #ffffff; /* Texto branco */
+}
+
+/* Células da tabela */
+.table-cel {
+    padding: var(--spacing);
+    border: 1px solid #ddd; /* Borda leve nas células */
+}
+
+/* Link na tabela */
+.table-link {
+    color: var(--link-dark-color);
+    transition: color var(--transition-fast) ease-in-out;
+    text-decoration: none;
+}
+
+.table-link:hover {
+    color: var(--clr-black);
+}

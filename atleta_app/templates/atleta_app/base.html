@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'atleta_app/css/style.css' %}"/>
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'atleta_app/images/logo.png' %}" alt="Logo FIT">
+            </a>
+        </div>
+        <nav>
+            {% block navbar %}
+            <a href="{% url 'cadastrarAtleta' %}" class="btn">Inserir Atleta</a>
+            <a href="{% url 'visualizarAtleta' %}" class="btn">Visualizar Atleta</a>
+            {% endblock %}
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2024 - Sistema de Monitoramento de Talentos Esportivos</p>
+    </footer>
+</body>
+</html>

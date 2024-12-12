@@ -1,0 +1,36 @@
+{% extends 'atleta_app/base.html' %}
+{% block title %}Cadastrar Atleta{% endblock %}
+
+{% block content %}
+<div class="form-wrapper cadastrar-atleta">
+    <h1>Cadastrar Atleta</h1>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-content">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+            <ul class="errorlist">
+                {% for error in field.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% if field.help_text %}
+            <p class="help-text">{{ field.help_text }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn">Cadastrar</button>
+    </form>
+</div>
+{% endblock %}

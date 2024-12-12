@@ -1,0 +1,23 @@
+{% extends "atleta_app/base.html" %}
+{% load static %}
+{% block content %}
+<div class="home-container">
+
+    
+    <div class="background-image" style="background: url('{% static "atleta_app/images/background.png" %}') no-repeat center center; background-size: cover; height: 100vh; width: 100%;"></div>
+    <div class="content">
+        <h1>MONITORAMENTO DE TALENTOS ESPORTIVOS</h1>
+        <p>
+            Centralize e acompanhe o desempenho dos seus atletas em uma plataforma 
+            única e inteligente, transformando dados em potencial esportivo!
+        </p>
+    </div>
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
