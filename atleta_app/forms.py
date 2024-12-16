@@ -2,9 +2,12 @@ from django import forms
 from .models import Atleta
 import re
 
+
+# Formulário para cadastro de atletas
 class AtletaForm(forms.ModelForm):
     class Meta:
         model = Atleta
+        # Campos que serão exibidos no formulário
         fields = [
             'nome',
             'cpf',
@@ -17,7 +20,7 @@ class AtletaForm(forms.ModelForm):
             'numeroDeJogosComoTitular',
         ]
     
-    # Validação personalizada para o CPF
+    # Validação personalizada para o CPF -  Formato xxx.xxx.xxx-xx
     def clean_cpf(self):
         cpf = self.cleaned_data.get('cpf')
         formato = re.compile(r'^\d{3}\.\d{3}\.\d{3}-\d{2}$')
