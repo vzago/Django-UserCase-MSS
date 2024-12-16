@@ -39,9 +39,9 @@ Depois de clonar o repositório, será necessário configurar um ambiente virtua
 > Após ativar o ambiente virtual, o nome do ambiente (como `venv`) deve aparecer antes do prompt.
 
 ### Instalando as Dependências
-Com o ambiente virtual ativado, instale as dependências necessárias para o projeto:
+Com o ambiente virtual ativado, instale o Django:
 ```bash
-pip install -r requirements.txt
+pip install django
 ```
 
 ### Configuração do Banco de Dados
