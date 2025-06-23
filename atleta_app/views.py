@@ -1,13 +1,62 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from .models import Atleta
-from .forms import AtletaForm
+from .forms import AtletaForm, UserRegistrationForm, UserLoginForm
 
 # Home
 def home(request):
     return render(request, 'atleta_app/home.html')
 
+# Login
+def user_login(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                messages.success(request, f'Bem-vindo, {user.first_name}!')
+                return redirect('home')
+            else:
+                messages.error(request, 'Usuário ou senha incorretos.')
+    else:
+        form = UserLoginForm()
+    
+    return render(request, 'atleta_app/login.html', {'form': form})
+
+# Logout
+def user_logout(request):
+    logout(request)
+    messages.success(request, 'Você foi desconectado com sucesso.')
+    return redirect('home')
+
+# Register
+def user_register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Conta criada com sucesso!')
+            return redirect('home')
+    else:
+        form = UserRegistrationForm()
+    
+    return render(request, 'atleta_app/register.html', {'form': form})
+
 # Cadastrar Atleta
+@login_required
 def cadastrarAtleta(request):
     
     # Verifica se o formulário foi submetido
@@ -25,6 +74,7 @@ def cadastrarAtleta(request):
     return render(request, 'atleta_app/cadastrarAtleta.html', {'form': form})
 
 # Visualizar Atleta
+@login_required
 def visualizarAtleta(request):
     cpf = request.GET.get('cpf')
     atleta = None

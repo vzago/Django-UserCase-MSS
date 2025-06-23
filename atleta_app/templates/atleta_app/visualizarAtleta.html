@@ -1,59 +1,151 @@
 {% extends "atleta_app/base.html" %}
 
-{% block title %}
-Visualizar Atleta
+{% block title %}Visualizar Atleta - FutSteps{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+        min-height: 100vh;
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<div class="form-wrapper">
-    <h1>Buscar Atleta</h1>
-    <form method="get" action="{% url 'visualizarAtleta' %}">
+<div class="form-wrapper visualizar-atleta">
+    <div class="form-header">
+        <h1>🔍 Buscar Atleta</h1>
+        <p>Digite o CPF do atleta para visualizar suas informações completas</p>
+    </div>
+
+    <form method="get" action="{% url 'visualizarAtleta' %}" class="form-content">
         <div class="form-group">
-            <label for="cpf">Digite o CPF do Atleta:</label>
-            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" pattern="\d{3}\.\d{3}\.\d{3}-\d{2}" title="O CPF deve estar no formato xxx.xxx.xxx-xx" required />
+            <label for="cpf">
+                <span class="field-label">🆔 CPF do Atleta</span>
+                <span class="required">*</span>
+            </label>
+            <input 
+                type="text" 
+                id="cpf" 
+                name="cpf" 
+                placeholder="000.000.000-00" 
+                class="form-control"
+                maxlength="14"
+                required 
+            />
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite apenas os números do CPF
+            </div>
+            {% if error_message %}
+            <ul class="errorlist">
+                <li>❌ {{ error_message }}</li>
+            </ul>
+            {% endif %}
         </div>
-        <button type="submit" class="btn">Buscar</button>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">🔍</span>
+                Buscar Atleta
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <span class="btn-icon">🏠</span>
+                Voltar ao Início
+            </a>
+        </div>
     </form>
 
     {% if error_message %}
-    <div class="message error">{{ error_message }}</div>
+    <div class="messages-container">
+        <div class="message error">
+            <span class="error-icon">⚠️</span>
+            {{ error_message }}
+            <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+    </div>
     {% endif %}
 </div>
 
 {% if atleta %}
-<div class="table-wrapper">
-    <h1>Informações do Atleta</h1>
-    <div class="responsive-table">
-        <table class="atleta-table">
-            <thead>
-                <tr class="table-row table-row-header">
-                    <th class="table-header">Nome</th>
-                    <th class="table-header">CPF</th>
-                    <th class="table-header">Idade</th>
-                    <th class="table-header">Altura</th>
-                    <th class="table-header">Peso</th>
-                    <th class="table-header">Clube</th>
-                    <th class="table-header">Posição</th>
-                    <th class="table-header">Total de Jogos</th>
-                    <th class="table-header">Jogos como Titular</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="table-row">
-                    <td class="table-cel">{{ atleta.nome }}</td>
-                    <td class="table-cel">{{ atleta.cpf }}</td>
-                    <td class="table-cel">{{ atleta.idade }}</td>
-                    <td class="table-cel">{{ atleta.altura }}</td>
-                    <td class="table-cel">{{ atleta.peso }}</td>
-                    <td class="table-cel">{{ atleta.clube }}</td>
-                    <td class="table-cel">{{ atleta.posicao }}</td>
-                    <td class="table-cel">{{ atleta.numeroTotalDeJogos }}</td>
-                    <td class="table-cel">{{ atleta.numeroDeJogosComoTitular }}</td>
-                </tr>
-            </tbody>
-        </table>
+<div class="atleta-info-wrapper">
+    <div class="atleta-header">
+        <h1>📋 Informações do Atleta</h1>
+        <p>Dados completos do atleta encontrado no sistema</p>
+    </div>
+    
+    <div class="atleta-card">
+        <div class="atleta-avatar">
+            <span class="avatar-icon">⚽</span>
+        </div>
+        
+        <div class="atleta-details">
+            <div class="detail-row">
+                <div class="detail-item">
+                    <span class="detail-label">👤 Nome:</span>
+                    <span class="detail-value">{{ atleta.nome }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">🆔 CPF:</span>
+                    <span class="detail-value">{{ atleta.cpf }}</span>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <span class="detail-label">🎂 Idade:</span>
+                    <span class="detail-value">{{ atleta.idade }} anos</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📏 Altura:</span>
+                    <span class="detail-value">{{ atleta.altura }}m</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">⚖️ Peso:</span>
+                    <span class="detail-value">{{ atleta.peso }}kg</span>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <span class="detail-label">🏆 Clube:</span>
+                    <span class="detail-value">{{ atleta.clube }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">⚽ Posição:</span>
+                    <span class="detail-value">{{ atleta.posicao }}</span>
+                </div>
+            </div>
+            
+            <div class="detail-row">
+                <div class="detail-item">
+                    <span class="detail-label">🎮 Total de Jogos:</span>
+                    <span class="detail-value">{{ atleta.numeroTotalDeJogos }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">⭐ Jogos como Titular:</span>
+                    <span class="detail-value">{{ atleta.numeroDeJogosComoTitular }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">📊 Taxa de Titularidade:</span>
+                    <span class="detail-value highlight">
+                        {% widthratio atleta.numeroDeJogosComoTitular atleta.numeroTotalDeJogos 100 %}%
+                    </span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="atleta-actions">
+            <a href="{% url 'cadastrarAtleta' %}" class="btn btn-primary">
+                <span class="btn-icon">➕</span>
+                Cadastrar Novo Atleta
+            </a>
+            <a href="{% url 'visualizarAtleta' %}" class="btn btn-secondary">
+                <span class="btn-icon">🔍</span>
+                Nova Busca
+            </a>
+        </div>
     </div>
 </div>
-
 {% endif %}
 {% endblock %}

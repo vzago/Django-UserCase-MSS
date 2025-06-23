@@ -1,34 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8"/>
-    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FutSteps{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'atleta_app/css/style.css' %}"/>
+    {% block extra_head %}{% endblock %}
 </head>
 
 <body>
-    <header>
-        <div class="logo">
-            <a href="{% url 'home' %}">
-                <img src="{% static 'atleta_app/images/logo.png' %}" alt="Logo FIT">
-            </a>
+    <header class="main-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'atleta_app/images/logo.png' %}" alt="FutSteps Logo">
+                </a>
+            </div>
+            
+            <nav class="main-nav">
+                {% if user.is_authenticated %}
+                    <div class="user-menu">
+                        <span class="user-name">Olá, {{ user.first_name }}</span>
+                        <a href="{% url 'logout' %}" class="nav-btn logout-btn">Sair</a>
+                    </div>
+                {% else %}
+                    <a href="{% url 'login' %}" class="nav-btn">Entrar</a>
+                    <a href="{% url 'register' %}" class="nav-btn register-btn">Criar Conta</a>
+                {% endif %}
+            </nav>
         </div>
-        <nav>
-            {% block navbar %}
-            <a href="{% url 'cadastrarAtleta' %}" class="btn">Inserir Atleta</a>
-            <a href="{% url 'visualizarAtleta' %}" class="btn">Visualizar Atleta</a>
-            {% endblock %}
-        </nav>
     </header>
 
-    <main>
+    <main class="main-content">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer>
-        <p>© 2024 - Sistema de Monitoramento de Talentos Esportivos</p>
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2024 - FutSteps - Sistema de Monitoramento de Talentos Esportivos</p>
+        </div>
     </footer>
+
+    <script src="{% static 'atleta_app/js/main.js' %}"></script>
 </body>
 </html>

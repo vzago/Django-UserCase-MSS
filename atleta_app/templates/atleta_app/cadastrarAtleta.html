@@ -1,36 +1,226 @@
 {% extends 'atleta_app/base.html' %}
-{% block title %}Cadastrar Atleta{% endblock %}
+{% block title %}Cadastrar Atleta - FutSteps{% endblock %}
+
+{% block extra_head %}
+<style>
+    body {
+        background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="form-wrapper cadastrar-atleta">
-    <h1>Cadastrar Atleta</h1>
+    <div class="form-header">
+        <h1>📝 Cadastrar Novo Atleta</h1>
+        <p>Preencha todos os campos abaixo para cadastrar um novo atleta no sistema</p>
+    </div>
     {% if messages %}
-    <div class="messages">
+    <div class="messages-container">
         {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
+        <div class="message {{ message.tags }}">
+            {{ message }}
+            <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
         {% endfor %}
     </div>
     {% endif %}
 
     <form method="post" class="form-content">
         {% csrf_token %}
-        {% for field in form %}
+        
+        <!-- Nome do Atleta -->
         <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.errors %}
+            <label for="{{ form.nome.id_for_label }}">
+                <span class="field-label">👤 Nome Completo</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.nome }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o nome completo do atleta (ex: João Silva Santos)
+            </div>
+            {% if form.nome.errors %}
             <ul class="errorlist">
-                {% for error in field.errors %}
-                <li>{{ error }}</li>
+                {% for error in form.nome.errors %}
+                <li>❌ {{ error }}</li>
                 {% endfor %}
             </ul>
             {% endif %}
-            {% if field.help_text %}
-            <p class="help-text">{{ field.help_text }}</p>
+        </div>
+
+        <!-- CPF -->
+        <div class="form-group">
+            <label for="{{ form.cpf.id_for_label }}">
+                <span class="field-label">🆔 CPF</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.cpf }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite apenas os números do CPF
+            </div>
+            {% if form.cpf.errors %}
+            <ul class="errorlist">
+                {% for error in form.cpf.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
             {% endif %}
         </div>
-        {% endfor %}
-        <button type="submit" class="btn">Cadastrar</button>
+
+        <!-- Idade -->
+        <div class="form-group">
+            <label for="{{ form.idade.id_for_label }}">
+                <span class="field-label">🎂 Idade</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.idade }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite a idade em anos (ex: 25)
+            </div>
+            {% if form.idade.errors %}
+            <ul class="errorlist">
+                {% for error in form.idade.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Altura -->
+        <div class="form-group">
+            <label for="{{ form.altura.id_for_label }}">
+                <span class="field-label">📏 Altura (metros)</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.altura }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite a altura em metros com ponto decimal (ex: 1.75)
+            </div>
+            {% if form.altura.errors %}
+            <ul class="errorlist">
+                {% for error in form.altura.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Peso -->
+        <div class="form-group">
+            <label for="{{ form.peso.id_for_label }}">
+                <span class="field-label">⚖️ Peso (kg)</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.peso }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o peso em quilogramas (ex: 70.5)
+            </div>
+            {% if form.peso.errors %}
+            <ul class="errorlist">
+                {% for error in form.peso.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Clube -->
+        <div class="form-group">
+            <label for="{{ form.clube.id_for_label }}">
+                <span class="field-label">🏆 Clube Atual</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.clube }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o nome do clube onde o atleta joga atualmente
+            </div>
+            {% if form.clube.errors %}
+            <ul class="errorlist">
+                {% for error in form.clube.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Posição -->
+        <div class="form-group">
+            <label for="{{ form.posicao.id_for_label }}">
+                <span class="field-label">⚽ Posição</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.posicao }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite a posição do atleta (ex: Atacante, Meio-campo, Zagueiro, Goleiro)
+            </div>
+            {% if form.posicao.errors %}
+            <ul class="errorlist">
+                {% for error in form.posicao.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Número Total de Jogos -->
+        <div class="form-group">
+            <label for="{{ form.numeroTotalDeJogos.id_for_label }}">
+                <span class="field-label">🎮 Total de Jogos</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.numeroTotalDeJogos }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o número total de jogos disputados pelo atleta
+            </div>
+            {% if form.numeroTotalDeJogos.errors %}
+            <ul class="errorlist">
+                {% for error in form.numeroTotalDeJogos.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <!-- Número de Jogos como Titular -->
+        <div class="form-group">
+            <label for="{{ form.numeroDeJogosComoTitular.id_for_label }}">
+                <span class="field-label">⭐ Jogos como Titular</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.numeroDeJogosComoTitular }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o número de jogos em que o atleta foi titular (não pode ser maior que o total)
+            </div>
+            {% if form.numeroDeJogosComoTitular.errors %}
+            <ul class="errorlist">
+                {% for error in form.numeroDeJogosComoTitular.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">✅</span>
+                Cadastrar Atleta
+            </button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <span class="btn-icon">🏠</span>
+                Voltar ao Início
+            </a>
+        </div>
+    </div>
     </form>
 </div>
 {% endblock %}
