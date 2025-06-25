@@ -1,0 +1,152 @@
+{% extends "atleta_app/base.html" %}
+
+{% block title %}Criar Conta - FutSteps{% endblock %}
+
+{% block content %}
+<div class="form-wrapper register-form">
+    <div class="form-header">
+        <h1>📝 Criar Nova Conta</h1>
+        <p>Preencha os dados abaixo para criar sua conta no FutSteps</p>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+            <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-content">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">
+                <span class="field-label">👤 Nome de Usuário</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.username }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Escolha um nome de usuário único (apenas letras, números e _)
+            </div>
+            {% if form.username.errors %}
+            <ul class="errorlist">
+                {% for error in form.username.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">
+                <span class="field-label">👨‍💼 Nome</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.first_name }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite seu primeiro nome
+            </div>
+            {% if form.first_name.errors %}
+            <ul class="errorlist">
+                {% for error in form.first_name.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">
+                <span class="field-label">👨‍💼 Sobrenome</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.last_name }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite seu sobrenome
+            </div>
+            {% if form.last_name.errors %}
+            <ul class="errorlist">
+                {% for error in form.last_name.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">
+                <span class="field-label">📧 E-mail</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.email }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite um e-mail válido (ex: usuario@exemplo.com)
+            </div>
+            {% if form.email.errors %}
+            <ul class="errorlist">
+                {% for error in form.email.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password1.id_for_label }}">
+                <span class="field-label">🔒 Senha</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.password1 }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Sua senha deve ter pelo menos 8 caracteres e não pode ser muito comum
+            </div>
+            {% if form.password1.errors %}
+            <ul class="errorlist">
+                {% for error in form.password1.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password2.id_for_label }}">
+                <span class="field-label">🔒 Confirmar Senha</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.password2 }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite a mesma senha novamente para confirmar
+            </div>
+            {% if form.password2.errors %}
+            <ul class="errorlist">
+                {% for error in form.password2.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">✅</span>
+                Criar Conta
+            </button>
+            <a href="{% url 'login' %}" class="btn btn-secondary">
+                <span class="btn-icon">🔐</span>
+                Já tenho conta
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %} 
