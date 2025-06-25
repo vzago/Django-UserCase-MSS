@@ -17,7 +17,7 @@ jobs:
       - name: 🐍 Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # Você pode ajustar conforme seu projeto
+          python-version: '3.11'
 
       - name: 💾 Instalar dependências
         run: |
@@ -25,5 +25,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: ⚙️ Rodar verificação Django
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           python manage.py check
