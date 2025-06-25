@@ -3,6 +3,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponseNotAllowed
 from .models import Atleta
 from .forms import AtletaForm, UserRegistrationForm, UserLoginForm
 
@@ -10,7 +13,9 @@ from .forms import AtletaForm, UserRegistrationForm, UserLoginForm
 def home(request):
     return render(request, 'atleta_app/home.html')
 
-# Login
+# Login - Allow GET and POST only
+@require_http_methods(["GET", "POST"])
+@csrf_protect
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -32,13 +37,17 @@ def user_login(request):
     
     return render(request, 'atleta_app/login.html', {'form': form})
 
-# Logout
+# Logout - Allow POST only for security
+@require_http_methods(["POST"])
+@csrf_protect
 def user_logout(request):
     logout(request)
     messages.success(request, 'Você foi desconectado com sucesso.')
     return redirect('home')
 
-# Register
+# Register - Allow GET and POST only
+@require_http_methods(["GET", "POST"])
+@csrf_protect
 def user_register(request):
     if request.user.is_authenticated:
         return redirect('home')

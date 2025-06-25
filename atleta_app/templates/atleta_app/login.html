@@ -1,0 +1,76 @@
+{% extends "atleta_app/base.html" %}
+
+{% block title %}Entrar - FutSteps{% endblock %}
+
+{% block content %}
+<div class="form-wrapper login-form">
+    <div class="form-header">
+        <h1>🔐 Entrar no Sistema</h1>
+        <p>Digite suas credenciais para acessar o FutSteps</p>
+    </div>
+
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">
+            {{ message }}
+            <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-content">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">
+                <span class="field-label">👤 Nome de Usuário</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.username }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite o nome de usuário cadastrado no sistema
+            </div>
+            {% if form.username.errors %}
+            <ul class="errorlist">
+                {% for error in form.username.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.password.id_for_label }}">
+                <span class="field-label">🔒 Senha</span>
+                <span class="required">*</span>
+            </label>
+            {{ form.password }}
+            <div class="field-instruction">
+                <span class="instruction-icon">💡</span>
+                Digite sua senha de acesso
+            </div>
+            {% if form.password.errors %}
+            <ul class="errorlist">
+                {% for error in form.password.errors %}
+                <li>❌ {{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">🔐</span>
+                Entrar
+            </button>
+            <a href="{% url 'register' %}" class="btn btn-secondary">
+                <span class="btn-icon">📝</span>
+                Criar Conta
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %} 
