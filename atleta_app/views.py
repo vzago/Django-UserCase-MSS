@@ -12,6 +12,7 @@ from .forms import AtletaForm, UserRegistrationForm, UserLoginForm
 import json
 
 # Home
+@require_http_methods(["GET"])
 def home(request):
     # Cache da página home por 10 minutos
     cache_key = 'home_page'
@@ -78,6 +79,8 @@ def user_register(request):
 
 # Cadastrar Atleta
 @login_required
+@csrf_protect
+@require_http_methods(["GET", "POST"])
 def cadastrar_atleta(request):
     
     # Verifica se o formulário foi submetido
@@ -106,6 +109,7 @@ def cadastrar_atleta(request):
 
 # Visualizar Atleta
 @login_required
+@require_http_methods(["GET"])
 def visualizar_atleta(request):
     cpf = request.GET.get('cpf', '').strip()
     nome = request.GET.get('nome', '').strip()
@@ -132,6 +136,7 @@ def visualizar_atleta(request):
 
 # Estatísticas dos Atletas
 @login_required
+@require_http_methods(["GET"])
 def estatisticas_atletas(request):
     """
     View otimizada para mostrar estatísticas dos atletas.
