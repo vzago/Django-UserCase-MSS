@@ -18,14 +18,15 @@ class Atleta(models.Model):
     
     #Método para registrar um atleta no banco de dados.
     
-    def registrarAtleta(self):
+    def registrar_atleta(self):
         self.save()
         
     
-    def visualizarAtleta(cpf):
+    @classmethod
+    def visualizar_atleta(cls, cpf):
         #Verificar se o Atleta está cadastrado no banco de dados
         try:
-            atleta = Atleta.objects.get(cpf = cpf)
+            atleta = cls.objects.get(cpf = cpf)
             #se estiver retorna o atleta
             return atleta
         
