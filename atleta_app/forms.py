@@ -17,9 +17,10 @@ class AtletaForm(forms.ModelForm):
     
     # Validação personalizada para o CPF -  Formato xxx.xxx.xxx-xx
     def clean_cpf(self):
+        INVALID_CPF_MSG = "CPF inválido."
         cpf = self.cleaned_data['cpf']
         # Remove caracteres não numéricos
-        cpf = re.sub(r'[^0-9]', '', cpf)
+        cpf = re.sub(r'\D', '', cpf)
         
         # Verifica se tem 11 dígitos
         if len(cpf) != 11:
@@ -27,7 +28,7 @@ class AtletaForm(forms.ModelForm):
         
         # Verifica se todos os dígitos são iguais
         if cpf == cpf[0] * 11:
-            raise forms.ValidationError("CPF inválido.")
+            raise forms.ValidationError(INVALID_CPF_MSG)
         
         # Validação do primeiro dígito verificador
         soma = sum(int(cpf[i]) * (10 - i) for i in range(9))
@@ -38,7 +39,7 @@ class AtletaForm(forms.ModelForm):
             digito1 = 11 - resto
         
         if int(cpf[9]) != digito1:
-            raise forms.ValidationError("CPF inválido.")
+            raise forms.ValidationError(INVALID_CPF_MSG)
         
         # Validação do segundo dígito verificador
         soma = sum(int(cpf[i]) * (11 - i) for i in range(10))
@@ -49,7 +50,7 @@ class AtletaForm(forms.ModelForm):
             digito2 = 11 - resto
         
         if int(cpf[10]) != digito2:
-            raise forms.ValidationError("CPF inválido.")
+            raise forms.ValidationError(INVALID_CPF_MSG)
         
         # Retorna o CPF formatado
         return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
