@@ -202,30 +202,41 @@ body {
 
 /* Hero Section Buttons */
 .hero-actions .btn-primary {
-    background: #FFD700;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     color: #000000;
     border-color: #FFD700;
-    font-weight: 700;
 }
 
 .hero-actions .btn-primary:hover {
-    background: #FFED4E;
+    background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    color: #000000;
 }
 
 .hero-actions .btn-secondary {
-    background: white;
-    color: #000000;
-    border-color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFD700;
+    border-color: rgba(255, 215, 0, 0.3);
 }
 
 .hero-actions .btn-secondary:hover {
-    background: #333333;
-    color: white;
-    border-color: #333333;
+    background: rgba(255, 215, 0, 0.2);
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(51, 51, 51, 0.4);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+}
+
+.hero-actions .btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    color: white;
+    border-color: #17a2b8;
+}
+
+.hero-actions .btn-info:hover {
+    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
+    color: white;
 }
 
 .welcome-message {
@@ -924,30 +935,41 @@ body.visualizar-atleta {
 
 /* Hero Section Buttons */
 .hero-actions .btn-primary {
-    background: #FFD700;
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     color: #000000;
     border-color: #FFD700;
-    font-weight: 700;
 }
 
 .hero-actions .btn-primary:hover {
-    background: #FFED4E;
+    background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    color: #000000;
 }
 
 .hero-actions .btn-secondary {
-    background: white;
-    color: #000000;
-    border-color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFD700;
+    border-color: rgba(255, 215, 0, 0.3);
 }
 
 .hero-actions .btn-secondary:hover {
-    background: #333333;
-    color: white;
-    border-color: #333333;
+    background: rgba(255, 215, 0, 0.2);
     transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(51, 51, 51, 0.4);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+}
+
+.hero-actions .btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    color: white;
+    border-color: #17a2b8;
+}
+
+.hero-actions .btn-info:hover {
+    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
+    color: white;
 }
 
 /* Primary Action Buttons - Yellow */

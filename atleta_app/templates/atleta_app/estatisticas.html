@@ -1,0 +1,548 @@
+{% extends 'atleta_app/base.html' %}
+{% load static %}
+
+{% block title %}Estatísticas dos Atletas{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.stats-container {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+    min-height: 100vh;
+    padding: 40px 32px 40px 32px; /* padding em todas as direções */
+    box-sizing: border-box;
+}
+
+.stats-header {
+    text-align: center;
+    margin-bottom: 50px;
+    color: white;
+}
+
+.stats-header h1 {
+    font-size: 3rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+    color: #FFD700;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.stats-header p {
+    font-size: 1.2rem;
+    opacity: 0.8;
+    color: #f0f0f0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.stat-card:hover::before {
+    left: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #FFD700;
+}
+
+.stat-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: white;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #FFD700;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.stat-unit {
+    font-size: 1rem;
+    color: #ccc;
+    margin-left: 5px;
+}
+
+.charts-section {
+    margin-bottom: 50px;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.chart-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.15);
+}
+
+.chart-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #FFD700;
+    text-align: center;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 20px 0;
+}
+
+.performance-info {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    border-left: 4px solid #FFD700;
+}
+
+.performance-info h3 {
+    color: #FFD700;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.performance-info p {
+    color: #f0f0f0;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.performance-info ul {
+    color: #f0f0f0;
+    margin-left: 20px;
+}
+
+.performance-info li {
+    margin-bottom: 5px;
+}
+
+.navigation-buttons {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 30px;
+    margin: 0 10px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    min-height: 50px;
+}
+
+.nav-btn-primary {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000000;
+    border-color: #FFD700;
+}
+
+.nav-btn-primary:hover {
+    background: linear-gradient(135deg, #FFA500 0%, #FFD700 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
+    color: #000000;
+}
+
+.nav-btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #FFD700;
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.nav-btn-secondary:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+}
+
+/* Botão de estatísticas destacado */
+.navigation-buttons .nav-btn-info {
+    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
+    color: #fff;
+    border-color: #17a2b8;
+}
+.navigation-buttons .nav-btn-info:hover {
+    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
+    transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+    .stats-header h1 {
+        font-size: 2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .nav-btn {
+        margin: 5px;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    .stats-container {
+        padding: 20px 8px 20px 8px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-container">
+    <div class="container">
+        <div class="stats-header">
+            <h1>📊 Estatísticas dos Atletas</h1>
+            <p>Análise detalhada do desempenho e características da equipe</p>
+        </div>
+        
+        {% if estatisticas %}
+        <!-- Cards de Estatísticas Principais -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-title">Total de Atletas</div>
+                <div class="stat-value">{{ estatisticas.total_atletas|default:"0" }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎂</div>
+                <div class="stat-title">Média de Idade</div>
+                <div class="stat-value">{{ estatisticas.media_idade|floatformat:1|default:"0" }}<span class="stat-unit">anos</span></div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">📏</div>
+                <div class="stat-title">Média de Altura</div>
+                <div class="stat-value">{{ estatisticas.media_altura|floatformat:2|default:"0" }}<span class="stat-unit">m</span></div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-title">Média de Peso</div>
+                <div class="stat-value">{{ estatisticas.media_peso|floatformat:1|default:"0" }}<span class="stat-unit">kg</span></div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div class="stat-title">Máximo de Jogos</div>
+                <div class="stat-value">{{ estatisticas.max_jogos|default:"0" }}</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-title">Mínimo de Jogos</div>
+                <div class="stat-value">{{ estatisticas.min_jogos|default:"0" }}</div>
+            </div>
+        </div>
+
+        <!-- Seção de Gráficos -->
+        <div class="charts-section">
+            <div class="charts-grid">
+                <!-- Gráfico de Pizza - Distribuição por Idade -->
+                <div class="chart-card">
+                    <div class="chart-title">📈 Distribuição por Faixa Etária</div>
+                    <div class="chart-container">
+                        <canvas id="idadeChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico de Barras - Comparação de Métricas -->
+                <div class="chart-card">
+                    <div class="chart-title">📊 Comparação de Métricas</div>
+                    <div class="chart-container">
+                        <canvas id="metricasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico de Linha - Evolução de Jogos -->
+            <div class="chart-card">
+                <div class="chart-title">📈 Evolução de Jogos por Atleta</div>
+                <div class="chart-container" style="height: 400px;">
+                    <canvas id="jogosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações de Performance -->
+        <div class="performance-info">
+            <h3>🚀 <i class="fas fa-rocket"></i> Informações de Performance</h3>
+            <p><strong>Cache:</strong> Estas estatísticas são cacheadas por 15 minutos para melhor performance.</p>
+            <p><strong>Otimização:</strong> As consultas são otimizadas com índices de banco de dados e agregações SQL.</p>
+            <ul>
+                <li><strong>Índices:</strong> Campos de busca otimizados para consultas rápidas</li>
+                <li><strong>Agregações:</strong> Cálculos realizados diretamente no banco de dados</li>
+                <li><strong>Cache:</strong> Sistema inteligente de cache para reduzir carga do servidor</li>
+                <li><strong>Responsividade:</strong> Interface adaptável para diferentes dispositivos</li>
+            </ul>
+        </div>
+        
+        {% else %}
+        <div class="performance-info">
+            <h3>⚠️ <i class="fas fa-exclamation-triangle"></i> Nenhuma estatística disponível</h3>
+            <p>Não há atletas cadastrados no sistema para gerar estatísticas.</p>
+            <p>Cadastre alguns atletas para começar a visualizar as análises!</p>
+        </div>
+        {% endif %}
+        
+        <!-- Botões de Navegação -->
+        <div class="navigation-buttons">
+            <a href="{% url 'home' %}" class="nav-btn nav-btn-primary">
+                <i class="fas fa-home"></i> Voltar ao Início
+            </a>
+            <a href="{% url 'visualizarAtleta' %}" class="nav-btn nav-btn-secondary">
+                <i class="fas fa-users"></i> Ver Atletas
+            </a>
+            <a href="{% url 'cadastrarAtleta' %}" class="nav-btn nav-btn-secondary">
+                <i class="fas fa-plus"></i> Cadastrar Atleta
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Aviso se Chart.js não carregar
+if (typeof Chart === 'undefined') {
+    alert('Chart.js não foi carregado corretamente. Verifique sua conexão ou tente recarregar a página.');
+}
+
+// Dados reais vindos do backend
+const faixasEtarias = JSON.parse('{{ faixas_etarias_json|escapejs }}');
+const nomesAtletas = JSON.parse('{{ nomes_atletas_json|escapejs }}');
+const totalJogos = JSON.parse('{{ total_jogos_json|escapejs }}');
+const jogosTitular = JSON.parse('{{ jogos_titular_json|escapejs }}');
+const estatisticas = JSON.parse('{{ estatisticas_json|escapejs }}');
+
+if (typeof Chart !== 'undefined') {
+    // Configuração global do Chart.js
+    Chart.defaults.color = '#f0f0f0';
+    Chart.defaults.borderColor = 'rgba(255, 215, 0, 0.2)';
+
+    // Gráfico de Pizza - Distribuição por Idade
+    var idadeCanvas = document.getElementById('idadeChart');
+    if (idadeCanvas) {
+        var idadeCtx = idadeCanvas.getContext('2d');
+        new Chart(idadeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['18-22 anos', '23-27 anos', '28-32 anos', '33+ anos'],
+                datasets: [{
+                    data: faixasEtarias,
+                    backgroundColor: [
+                        '#FFD700',
+                        '#FFA500',
+                        '#FF6347',
+                        '#FF4500'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#000000'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#f0f0f0',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Barras - Comparação de Métricas
+    var metricasCanvas = document.getElementById('metricasChart');
+    if (metricasCanvas) {
+        var metricasCtx = metricasCanvas.getContext('2d');
+        new Chart(metricasCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Idade (anos)', 'Altura (cm)', 'Peso (kg)', 'Jogos'],
+                datasets: [{
+                    label: 'Média',
+                    data: [
+                        estatisticas.media_idade || 0,
+                        estatisticas.media_altura*100 || 0,
+                        estatisticas.media_peso || 0,
+                        (estatisticas.max_jogos + estatisticas.min_jogos) / 2 || 0
+                    ],
+                    backgroundColor: 'rgba(255, 215, 0, 0.8)',
+                    borderColor: '#FFD700',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 215, 0, 0.1)'
+                        },
+                        ticks: {
+                            color: '#f0f0f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 215, 0, 0.1)'
+                        },
+                        ticks: {
+                            color: '#f0f0f0'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    // Gráfico de Linha - Evolução de Jogos
+    var jogosCanvas = document.getElementById('jogosChart');
+    if (jogosCanvas) {
+        var jogosCtx = jogosCanvas.getContext('2d');
+        new Chart(jogosCtx, {
+            type: 'line',
+            data: {
+                labels: nomesAtletas,
+                datasets: [{
+                    label: 'Total de Jogos',
+                    data: totalJogos,
+                    borderColor: '#FFD700',
+                    backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }, {
+                    label: 'Jogos como Titular',
+                    data: jogosTitular,
+                    borderColor: '#FFA500',
+                    backgroundColor: 'rgba(255, 165, 0, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 215, 0, 0.1)'
+                        },
+                        ticks: {
+                            color: '#f0f0f0'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 215, 0, 0.1)'
+                        },
+                        ticks: {
+                            color: '#f0f0f0'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#f0f0f0',
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 
