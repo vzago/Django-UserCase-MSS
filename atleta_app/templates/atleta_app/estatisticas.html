@@ -1,0 +1,110 @@
+{% extends 'atleta_app/base.html' %}
+{% load static %}
+
+{% block title %}Estatísticas dos Atletas{% endblock %}
+
+{% block extra_head %}
+<script src="{% static 'atleta_app/js/chart.js' %}"></script>
+<link rel="stylesheet" href="{% static 'atleta_app/css/estatisticas.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="stats-container">
+    <div class="container">
+        <div class="stats-header">
+            <h1>📊 Estatísticas dos Atletas</h1>
+            <p>Análise detalhada do desempenho e características da equipe</p>
+        </div>
+        
+        {% if estatisticas %}
+        <!-- Cards de Estatísticas Principais -->
+        <div class="stats-grid">
+            {% include 'atleta_app/partials/stat_card.html' with icon='👥' title='Total de Atletas' value=estatisticas.total_atletas|default:"0" %}
+            {% include 'atleta_app/partials/stat_card.html' with icon='🎂' title='Média de Idade' value=estatisticas.media_idade|floatformat:1|default:"0" unit='anos' %}
+            {% include 'atleta_app/partials/stat_card.html' with icon='📏' title='Média de Altura' value=estatisticas.media_altura|floatformat:2|default:"0" unit='m' %}
+            {% include 'atleta_app/partials/stat_card.html' with icon='⚖️' title='Média de Peso' value=estatisticas.media_peso|floatformat:1|default:"0" unit='kg' %}
+            {% include 'atleta_app/partials/stat_card.html' with icon='🏆' title='Máximo de Jogos' value=estatisticas.max_jogos|default:"0" %}
+            {% include 'atleta_app/partials/stat_card.html' with icon='🎯' title='Mínimo de Jogos' value=estatisticas.min_jogos|default:"0" %}
+        </div>
+
+        <!-- Seção de Gráficos -->
+        <div class="charts-section">
+            <div class="charts-grid">
+                <!-- Gráfico de Pizza - Distribuição por Idade -->
+                <div class="chart-card">
+                    <div class="chart-title">📈 Distribuição por Faixa Etária</div>
+                    <div class="chart-container">
+                        <canvas id="idadeChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico de Barras - Comparação de Métricas -->
+                <div class="chart-card">
+                    <div class="chart-title">📊 Comparação de Métricas</div>
+                    <div class="chart-container">
+                        <canvas id="metricasChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gráfico de Linha - Evolução de Jogos -->
+            <div class="chart-card">
+                <div class="chart-title">📈 Evolução de Jogos por Atleta</div>
+                <div class="chart-container chart-container-large">
+                    <canvas id="jogosChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informações de Performance -->
+        <div class="performance-info">
+            <h3>🚀 <i class="fas fa-rocket"></i> Informações de Performance</h3>
+            <p><strong>Cache:</strong> Estas estatísticas são cacheadas por 15 minutos para melhor performance.</p>
+            <p><strong>Otimização:</strong> As consultas são otimizadas com índices de banco de dados e agregações SQL.</p>
+            <ul>
+                <li><strong>Índices:</strong> Campos de busca otimizados para consultas rápidas</li>
+                <li><strong>Agregações:</strong> Cálculos realizados diretamente no banco de dados</li>
+                <li><strong>Cache:</strong> Sistema inteligente de cache para reduzir carga do servidor</li>
+                <li><strong>Responsividade:</strong> Interface adaptável para diferentes dispositivos</li>
+            </ul>
+        </div>
+        
+        {% else %}
+        <div class="performance-info">
+            <h3>⚠️ <i class="fas fa-exclamation-triangle"></i> Nenhuma estatística disponível</h3>
+            <p>Não há atletas cadastrados no sistema para gerar estatísticas.</p>
+            <p>Cadastre alguns atletas para começar a visualizar as análises!</p>
+        </div>
+        {% endif %}
+        
+        <!-- Botões de Navegação -->
+        <div class="navigation-buttons">
+            <a href="{% url 'home' %}" class="nav-btn nav-btn-primary">
+                <i class="fas fa-home"></i> Voltar ao Início
+            </a>
+            <a href="{% url 'visualizarAtleta' %}" class="nav-btn nav-btn-secondary">
+                <i class="fas fa-users"></i> Ver Atletas
+            </a>
+            <a href="{% url 'cadastrarAtleta' %}" class="nav-btn nav-btn-secondary">
+                <i class="fas fa-plus"></i> Cadastrar Atleta
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'atleta_app/js/estatisticas.js' %}"></script>
+<script>
+// Inicialização dos gráficos com dados do Django
+document.addEventListener('DOMContentLoaded', function() {
+    const chartData = {
+        faixasEtarias: JSON.parse('{{ faixas_etarias_json|escapejs }}'),
+        nomesAtletas: JSON.parse('{{ nomes_atletas_json|escapejs }}'),
+        totalJogos: JSON.parse('{{ total_jogos_json|escapejs }}'),
+        jogosTitular: JSON.parse('{{ jogos_titular_json|escapejs }}'),
+        estatisticas: JSON.parse('{{ estatisticas_json|escapejs }}')
+    };
+    
+    initializeCharts(chartData);
+});
+</script>
+{% endblock %} 

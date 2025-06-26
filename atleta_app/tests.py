@@ -185,6 +185,149 @@ class VisualizarAtletaTests(TestCase):
         })
         self.assertContains(response, 'Este campo é obrigatório', status_code=200)
 
+    def test_metodo_modelo_visualizar_atleta(self):
+        """Testa se o método centralizado do modelo está funcionando corretamente"""
+        # Teste busca por CPF (encontrado)
+        atletas, _ = Atleta.visualizar_atleta(cpf='123.456.789-10')
+        self.assertEqual(len(atletas), 1)
+        self.assertEqual(atletas[0].nome, 'Arthur Moreira')
+        
+        # Teste busca por CPF (não encontrado)
+        atletas, _ = Atleta.visualizar_atleta(cpf='000.000.000-00')
+        self.assertEqual(len(atletas), 0)
+        
+        # Teste busca por nome
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
+        self.assertEqual(len(atletas), 1)
+        self.assertEqual(atletas[0].nome, 'Arthur Moreira')
+        
+        # Teste busca por clube
+        atletas, _ = Atleta.visualizar_atleta(clube='Palmeiras')
+        self.assertEqual(len(atletas), 1)
+        self.assertEqual(atletas[0].clube, 'Palmeiras')
+        
+        # Teste busca por posição
+        atletas, _ = Atleta.visualizar_atleta(posicao='Zagueiro')
+        self.assertEqual(len(atletas), 1)
+        self.assertEqual(atletas[0].posicao, 'Zagueiro')
+        
+        # Teste busca múltipla
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur', clube='Palmeiras')
+        self.assertEqual(len(atletas), 1)
+        self.assertEqual(atletas[0].nome, 'Arthur Moreira')
+        
+        # Teste busca sem filtros
+        atletas, _ = Atleta.visualizar_atleta()
+        self.assertEqual(len(atletas), 2)  # Ambos os atletas
+
+    def test_metodo_estatisticas_atletas(self):
+        """Testa se o método de estatísticas está funcionando corretamente"""
+        estatisticas = Atleta.get_atletas_estatisticas()
+        
+        # Verifica se as estatísticas foram calculadas
+        self.assertIsNotNone(estatisticas)
+        self.assertEqual(estatisticas['total_atletas'], 2)
+        self.assertIsNotNone(estatisticas['media_idade'])
+        self.assertIsNotNone(estatisticas['media_altura'])
+        self.assertIsNotNone(estatisticas['media_peso'])
+        self.assertIsNotNone(estatisticas['max_jogos'])
+        self.assertIsNotNone(estatisticas['min_jogos'])
+        
+        # Verifica se os valores fazem sentido
+        self.assertGreater(estatisticas['media_idade'], 0)
+        self.assertGreater(estatisticas['media_altura'], 0)
+        self.assertGreater(estatisticas['media_peso'], 0)
+        self.assertGreaterEqual(estatisticas['max_jogos'], estatisticas['min_jogos'])
+
+    def test_view_estatisticas_atletas(self):
+        """Testa se a view de estatísticas está funcionando corretamente"""
+        response = self.client.get(reverse('estatisticas'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Estatísticas dos Atletas')
+        self.assertContains(response, 'Total de Atletas')
+
+    def test_view_estatisticas_sem_login(self):
+        """Testa se a view de estatísticas requer login"""
+        self.client.logout()
+        response = self.client.get(reverse('estatisticas'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('login'), response.url)
+
+    def test_view_estatisticas_com_graficos(self):
+        """Testa se a view de estatísticas carrega corretamente com gráficos"""
+        response = self.client.get(reverse('estatisticas'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Estatísticas dos Atletas')
+        self.assertContains(response, '/static/atleta_app/js/chart.js')
+        self.assertContains(response, 'idadeChart')
+        self.assertContains(response, 'metricasChart')
+        self.assertContains(response, 'jogosChart')
+
+    def test_home_com_botao_estatisticas(self):
+        """Testa se a home page tem o botão de estatísticas com ícone"""
+        response = self.client.get(reverse('home'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'fa-chart-bar')
+        self.assertContains(response, 'Estatísticas')
+        self.assertContains(response, reverse('estatisticas'))
+
+    def test_cache_visualizar_atleta(self):
+        """Testa se o cache está funcionando no método visualizar_atleta"""
+        from django.core.cache import cache
+        
+        # Limpa cache antes do teste
+        cache.clear()
+        
+        # Primeira chamada (sem cache)
+        atletas1, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
+        
+        # Segunda chamada (com cache)
+        atletas2, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
+        
+        # Terceira chamada (sem cache)
+        atletas3, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=False)
+        
+        # Verifica se os resultados são iguais
+        self.assertEqual(len(atletas1), len(atletas2))
+        self.assertEqual(len(atletas1), len(atletas3))
+        self.assertEqual(atletas1[0].nome, atletas2[0].nome)
+        self.assertEqual(atletas1[0].nome, atletas3[0].nome)
+
+    def test_otimizacao_only_fields(self):
+        """Testa se a otimização only() está funcionando corretamente"""
+        # Busca com otimização
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
+        
+        # Verifica se os campos necessários estão disponíveis
+        atleta = atletas[0]
+        self.assertIsNotNone(atleta.nome)
+        self.assertIsNotNone(atleta.cpf)
+        self.assertIsNotNone(atleta.idade)
+        self.assertIsNotNone(atleta.altura)
+        self.assertIsNotNone(atleta.clube)
+        self.assertIsNotNone(atleta.peso)
+        self.assertIsNotNone(atleta.posicao)
+        self.assertIsNotNone(atleta.numeroTotalDeJogos)
+        self.assertIsNotNone(atleta.numeroDeJogosComoTitular)
+
+    def test_indices_banco_dados(self):
+        """Testa se os índices estão funcionando corretamente"""
+        # Testa busca por CPF (deve usar índice)
+        atletas, _ = Atleta.visualizar_atleta(cpf='123.456.789-10')
+        self.assertEqual(len(atletas), 1)
+        
+        # Testa busca por nome (deve usar índice)
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
+        self.assertEqual(len(atletas), 1)
+        
+        # Testa busca por clube (deve usar índice)
+        atletas, _ = Atleta.visualizar_atleta(clube='Palmeiras')
+        self.assertEqual(len(atletas), 1)
+        
+        # Testa busca por posição (deve usar índice)
+        atletas, _ = Atleta.visualizar_atleta(posicao='Atacante')
+        self.assertEqual(len(atletas), 1)
+
 class AuthExtraTests(TestCase):
     def setUp(self):
         self.client = Client()
