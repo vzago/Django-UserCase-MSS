@@ -75,6 +75,16 @@ class UserRegistrationForm(UserCreationForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Set better labels for password fields
+        self.fields['password1'].label = 'Senha'
+        self.fields['password2'].label = 'Confirmar Senha'
+        
+        # Add custom error messages
+        self.fields['password2'].error_messages = {
+            'required': 'Por favor, confirme sua senha.',
+            'password_mismatch': 'As senhas não coincidem. Por favor, tente novamente.',
+        }
+        
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
