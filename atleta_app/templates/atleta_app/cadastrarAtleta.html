@@ -9,12 +9,12 @@
     }
 </style>
 <script>
-window.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('input[name="cpf"]').forEach(function(input) {
-    input.classList.add('cpf-input');
-    if (window.applyCpfMask) window.applyCpfMask(input);
-  });
-});
+    window.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('input[name="cpf"]').forEach(function (input) {
+            input.classList.add('cpf-input');
+            if (window.applyCpfMask) window.applyCpfMask(input);
+        });
+    });
 </script>
 {% endblock %}
 
@@ -37,7 +37,14 @@ window.addEventListener('DOMContentLoaded', function() {
 
     <form method="post" class="form-content">
         {% csrf_token %}
-        
+        {% if form.non_field_errors %}
+        <ul class="errorlist">
+            {% for error in form.non_field_errors %}
+            <li>❌ {{ error }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
         <!-- Nome do Atleta -->
         <div class="form-group">
             <label for="{{ form.nome.id_for_label }}">
@@ -228,7 +235,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 Voltar ao Início
             </a>
         </div>
-    </div>
-    </form>
+</div>
+</form>
 </div>
 {% endblock %}
