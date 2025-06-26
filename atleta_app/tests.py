@@ -258,7 +258,7 @@ class VisualizarAtletaTests(TestCase):
         response = self.client.get(reverse('estatisticas'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Estatísticas dos Atletas')
-        self.assertContains(response, 'Chart.js')
+        self.assertContains(response, '/static/atleta_app/js/chart.js')
         self.assertContains(response, 'idadeChart')
         self.assertContains(response, 'metricasChart')
         self.assertContains(response, 'jogosChart')
