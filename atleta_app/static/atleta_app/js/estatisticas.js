@@ -3,6 +3,9 @@
  * Arquivo separado para melhor organização e reutilização
  */
 
+// Armazenamento global para instâncias dos gráficos
+window.chartInstances = {};
+
 // Configurações globais e constantes
 const CHART_CONFIG = {
     colors: {
@@ -117,7 +120,7 @@ function createIdadeChart(data) {
         }]
     }, createScalesConfig(true, 'bottom'));
     
-    const idadeChart = new Chart(canvas.getContext('2d'), config);
+    window.chartInstances.idadeChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**
@@ -144,7 +147,7 @@ function createMetricasChart(estatisticas) {
         }]
     }, createScalesConfig(false));
     
-    const metricasChart = new Chart(canvas.getContext('2d'), config);
+    window.chartInstances.metricasChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**
@@ -178,7 +181,7 @@ function createJogosChart(nomesAtletas, totalJogos, jogosTitular) {
         }]
     }, createScalesConfig(true, 'top'));
     
-    const jogosChart = new Chart(canvas.getContext('2d'), config);
+    window.chartInstances.jogosChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**
