@@ -141,3 +141,14 @@ GitHub.sublime-settings
 
 # PDF Files
 *.pdf
+
+# Ignora todos os arquivos compilados Python
+__pycache__/
+*.py[cod]
+
+# Ignora o ambiente virtual
+venv/
+
+# Ignora migrações compiladas
+**/migrations/__pycache__/
+
