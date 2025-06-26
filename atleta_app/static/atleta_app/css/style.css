@@ -959,19 +959,6 @@ body.visualizar-atleta {
     box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
 }
 
-.hero-actions .btn-info {
-    background: linear-gradient(135deg, #17a2b8 0%, #20c997 100%);
-    color: white;
-    border-color: #17a2b8;
-}
-
-.hero-actions .btn-info:hover {
-    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(23, 162, 184, 0.4);
-    color: white;
-}
-
 /* Primary Action Buttons - Yellow */
 .btn-primary {
     background: #FFD700;

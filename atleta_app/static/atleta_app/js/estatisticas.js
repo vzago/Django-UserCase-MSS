@@ -117,7 +117,7 @@ function createIdadeChart(data) {
         }]
     }, createScalesConfig(true, 'bottom'));
     
-    new Chart(canvas.getContext('2d'), config);
+    const idadeChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**
@@ -144,7 +144,7 @@ function createMetricasChart(estatisticas) {
         }]
     }, createScalesConfig(false));
     
-    new Chart(canvas.getContext('2d'), config);
+    const metricasChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**
@@ -178,7 +178,7 @@ function createJogosChart(nomesAtletas, totalJogos, jogosTitular) {
         }]
     }, createScalesConfig(true, 'top'));
     
-    new Chart(canvas.getContext('2d'), config);
+    const jogosChart = new Chart(canvas.getContext('2d'), config);
 }
 
 /**

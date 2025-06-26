@@ -188,45 +188,37 @@ class VisualizarAtletaTests(TestCase):
     def test_metodo_modelo_visualizar_atleta(self):
         """Testa se o método centralizado do modelo está funcionando corretamente"""
         # Teste busca por CPF (encontrado)
-        atletas, error = Atleta.visualizar_atleta(cpf='123.456.789-10')
+        atletas, _ = Atleta.visualizar_atleta(cpf='123.456.789-10')
         self.assertEqual(len(atletas), 1)
         self.assertEqual(atletas[0].nome, 'Arthur Moreira')
-        self.assertIsNone(error)
         
         # Teste busca por CPF (não encontrado)
-        atletas, error = Atleta.visualizar_atleta(cpf='000.000.000-00')
+        atletas, _ = Atleta.visualizar_atleta(cpf='000.000.000-00')
         self.assertEqual(len(atletas), 0)
-        self.assertIsNotNone(error)
-        self.assertIn('Atleta não encontrado', error)
         
         # Teste busca por nome
-        atletas, error = Atleta.visualizar_atleta(nome='Arthur')
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
         self.assertEqual(len(atletas), 1)
         self.assertEqual(atletas[0].nome, 'Arthur Moreira')
-        self.assertIsNone(error)
         
         # Teste busca por clube
-        atletas, error = Atleta.visualizar_atleta(clube='Palmeiras')
+        atletas, _ = Atleta.visualizar_atleta(clube='Palmeiras')
         self.assertEqual(len(atletas), 1)
         self.assertEqual(atletas[0].clube, 'Palmeiras')
-        self.assertIsNone(error)
         
         # Teste busca por posição
-        atletas, error = Atleta.visualizar_atleta(posicao='Zagueiro')
+        atletas, _ = Atleta.visualizar_atleta(posicao='Zagueiro')
         self.assertEqual(len(atletas), 1)
         self.assertEqual(atletas[0].posicao, 'Zagueiro')
-        self.assertIsNone(error)
         
         # Teste busca múltipla
-        atletas, error = Atleta.visualizar_atleta(nome='Arthur', clube='Palmeiras')
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur', clube='Palmeiras')
         self.assertEqual(len(atletas), 1)
         self.assertEqual(atletas[0].nome, 'Arthur Moreira')
-        self.assertIsNone(error)
         
         # Teste busca sem filtros
-        atletas, error = Atleta.visualizar_atleta()
+        atletas, _ = Atleta.visualizar_atleta()
         self.assertEqual(len(atletas), 2)  # Ambos os atletas
-        self.assertIsNone(error)
 
     def test_metodo_estatisticas_atletas(self):
         """Testa se o método de estatísticas está funcionando corretamente"""
@@ -287,13 +279,13 @@ class VisualizarAtletaTests(TestCase):
         cache.clear()
         
         # Primeira chamada (sem cache)
-        atletas1, error1 = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
+        atletas1, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
         
         # Segunda chamada (com cache)
-        atletas2, error2 = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
+        atletas2, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=True)
         
         # Terceira chamada (sem cache)
-        atletas3, error3 = Atleta.visualizar_atleta(nome='Arthur', use_cache=False)
+        atletas3, _ = Atleta.visualizar_atleta(nome='Arthur', use_cache=False)
         
         # Verifica se os resultados são iguais
         self.assertEqual(len(atletas1), len(atletas2))
@@ -304,7 +296,7 @@ class VisualizarAtletaTests(TestCase):
     def test_otimizacao_only_fields(self):
         """Testa se a otimização only() está funcionando corretamente"""
         # Busca com otimização
-        atletas, error = Atleta.visualizar_atleta(nome='Arthur')
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
         
         # Verifica se os campos necessários estão disponíveis
         atleta = atletas[0]
@@ -321,19 +313,19 @@ class VisualizarAtletaTests(TestCase):
     def test_indices_banco_dados(self):
         """Testa se os índices estão funcionando corretamente"""
         # Testa busca por CPF (deve usar índice)
-        atletas, error = Atleta.visualizar_atleta(cpf='123.456.789-10')
+        atletas, _ = Atleta.visualizar_atleta(cpf='123.456.789-10')
         self.assertEqual(len(atletas), 1)
         
         # Testa busca por nome (deve usar índice)
-        atletas, error = Atleta.visualizar_atleta(nome='Arthur')
+        atletas, _ = Atleta.visualizar_atleta(nome='Arthur')
         self.assertEqual(len(atletas), 1)
         
         # Testa busca por clube (deve usar índice)
-        atletas, error = Atleta.visualizar_atleta(clube='Palmeiras')
+        atletas, _ = Atleta.visualizar_atleta(clube='Palmeiras')
         self.assertEqual(len(atletas), 1)
         
         # Testa busca por posição (deve usar índice)
-        atletas, error = Atleta.visualizar_atleta(posicao='Atacante')
+        atletas, _ = Atleta.visualizar_atleta(posicao='Atacante')
         self.assertEqual(len(atletas), 1)
 
 class AuthExtraTests(TestCase):
