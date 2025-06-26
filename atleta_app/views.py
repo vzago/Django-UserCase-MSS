@@ -66,7 +66,7 @@ def user_register(request):
 
 # Cadastrar Atleta
 @login_required
-def cadastrarAtleta(request):
+def cadastrar_atleta(request):
     
     # Verifica se o formulário foi submetido
     if request.method == 'POST':
@@ -84,7 +84,7 @@ def cadastrarAtleta(request):
 
 # Visualizar Atleta
 @login_required
-def visualizarAtleta(request):
+def visualizar_atleta(request):
     cpf = request.GET.get('cpf', '').strip()
     nome = request.GET.get('nome', '').strip()
     clube = request.GET.get('clube', '').strip()
