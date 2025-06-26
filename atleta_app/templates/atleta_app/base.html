@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}FutSteps{% endblock %}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'atleta_app/css/style.css' %}"/>
+    <link rel="icon" type="image/png" href="{% static 'atleta_app/images/favicon.png' %}">
+    <link rel="stylesheet" href="{% static 'atleta_app/css/all.min.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 
@@ -47,5 +49,29 @@
     </footer>
 
     <script src="{% static 'atleta_app/js/main.js' %}"></script>
+    <script>
+    // Função global para aplicar máscara de CPF em qualquer input
+    window.applyCpfMask = function(input) {
+        function maskHandler(e) {
+            let v = input.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0,11);
+            let formatted = '';
+            if (v.length > 9) {
+                formatted = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+            } else if (v.length > 6) {
+                formatted = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            } else if (v.length > 3) {
+                formatted = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            } else {
+                formatted = v;
+            }
+            input.value = formatted;
+        }
+        input.addEventListener('input', maskHandler);
+        input.addEventListener('keypress', function(e) {
+            if (!/\d/.test(e.key)) e.preventDefault();
+        });
+    };
+    </script>
 </body>
 </html>

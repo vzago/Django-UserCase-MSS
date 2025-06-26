@@ -17,8 +17,15 @@
             
             {% if user.is_authenticated %}
                 <div class="hero-actions">
-                    <a href="{% url 'cadastrarAtleta' %}" class="btn btn-primary">Cadastrar Atleta</a>
-                    <a href="{% url 'visualizarAtleta' %}" class="btn btn-secondary">Visualizar Atletas</a>
+                    <a href="{% url 'cadastrarAtleta' %}" class="nav-btn nav-btn-primary">
+                        <i class="fas fa-plus"></i> Cadastrar Atleta
+                    </a>
+                    <a href="{% url 'visualizarAtleta' %}" class="nav-btn nav-btn-secondary">
+                        <i class="fas fa-users"></i> Visualizar Atletas
+                    </a>
+                    <a href="{% url 'estatisticas' %}" class="nav-btn nav-btn-info">
+                        <i class="fas fa-chart-bar"></i> Estatísticas
+                    </a>
                 </div>
             {% else %}
                 <div class="hero-actions">
