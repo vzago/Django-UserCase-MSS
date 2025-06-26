@@ -1,0 +1,44 @@
+{% extends "atleta_app/base.html" %}
+{% load static %}
+
+{% block title %}Login - FutSteps{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Entrar no Sistema</h1>
+            <p>Faça login para acessar o sistema de monitoramento de talentos esportivos</p>
+        </div>
+        
+        {% include "atleta_app/partials/messages.html" %}
+        
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+                {{ form.username }}
+                {% with field=form.username %}
+                    {% include "atleta_app/partials/field_errors.html" %}
+                {% endwith %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% with field=form.password %}
+                    {% include "atleta_app/partials/field_errors.html" %}
+                {% endwith %}
+            </div>
+
+            <button type="submit" class="auth-btn">Entrar</button>
+        </form>
+        
+        <div class="auth-footer">
+            <p>Não tem uma conta? <a href="{% url 'register' %}" class="auth-link">Registre-se aqui</a></p>
+            <a href="{% url 'home' %}" class="auth-link">Voltar para a página inicial</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

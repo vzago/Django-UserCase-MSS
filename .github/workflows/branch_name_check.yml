@@ -1,0 +1,39 @@
+name: Enforce branch naming rules
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch source and destination
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          TARGET_BRANCH="${{ github.base_ref }}"
+
+          echo "📌 HEAD: $BRANCH_NAME"
+          echo "📌 BASE: $TARGET_BRANCH"
+
+          # Regra 1: feature/, fix/, hotfix/ devem ir para develop
+          if [[ "$BRANCH_NAME" =~ ^(feature|fix|hotfix|test)/ ]]; then
+            if [[ "$TARGET_BRANCH" != "develop" ]]; then
+              echo "❌ A branch '$BRANCH_NAME' só pode abrir PRs para 'develop'."
+              exit 1
+            fi
+
+          # Regra 2: develop só pode ir para main
+          elif [[ "$BRANCH_NAME" == "develop" ]]; then
+            if [[ "$TARGET_BRANCH" != "main" ]]; then
+              echo "❌ A branch 'develop' só pode abrir PRs para 'main'."
+              exit 1
+            fi
+
+          # Outros nomes não são permitidos
+          else
+            echo "❌ Branch '$BRANCH_NAME' não segue o padrão esperado (feature/, fix/, hotfix/ ou develop)."
+            exit 1
+          fi
+
+          echo "✅ Branch '$BRANCH_NAME' pode abrir PR para '$TARGET_BRANCH'."
