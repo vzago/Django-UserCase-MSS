@@ -10,106 +10,32 @@
             <h1>Criar Conta</h1>
             <p>Registre-se para acessar o sistema de monitoramento de talentos esportivos</p>
         </div>
-        
-        {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                    <div class="message {{ message.tags }}">
-                        {{ message }}
-                        <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-        
+
+        {% include "atleta_app/partials/messages.html" %}
+
         <form method="post" class="auth-form">
             {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="field-error">
-                        {% for error in form.username.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% if form.username.help_text %}
-                    <small class="help-text">{{ form.username.help_text }}</small>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
-                {{ form.first_name }}
-                {% if form.first_name.errors %}
-                    <div class="field-error">
-                        {% for error in form.first_name.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
-                {{ form.last_name }}
-                {% if form.last_name.errors %}
-                    <div class="field-error">
-                        {% for error in form.last_name.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                    <div class="field-error">
-                        {% for error in form.email.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
-                {{ form.password1 }}
-                {% if form.password1.errors %}
-                    <div class="field-error">
-                        {% for error in form.password1.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                {% if form.password1.help_text %}
-                    <small class="help-text">{{ form.password1.help_text }}</small>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
-                {{ form.password2 }}
-                {% if form.password2.errors %}
-                    <div class="field-error">
-                        {% for error in form.password2.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </div>
-            
+
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% with field=field %}
+                        {% include "atleta_app/partials/field_errors.html" %}
+                    {% endwith %}
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
             <button type="submit" class="auth-btn">Criar Conta</button>
         </form>
-        
+
         <div class="auth-footer">
             <p>Já tem uma conta? <a href="{% url 'login' %}" class="auth-link">Faça login aqui</a></p>
             <a href="{% url 'home' %}" class="auth-link">Voltar para a página inicial</a>
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

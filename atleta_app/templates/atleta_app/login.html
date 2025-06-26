@@ -11,44 +11,27 @@
             <p>Faça login para acessar o sistema de monitoramento de talentos esportivos</p>
         </div>
         
-        {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                    <div class="message {{ message.tags }}">
-                        {{ message }}
-                        <button class="message-close" onclick="this.parentElement.remove()">&times;</button>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+        {% include "atleta_app/partials/messages.html" %}
         
         <form method="post" class="auth-form">
             {% csrf_token %}
-            
+
             <div class="form-group">
                 <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
                 {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="field-error">
-                        {% for error in form.username.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {% with field=form.username %}
+                    {% include "atleta_app/partials/field_errors.html" %}
+                {% endwith %}
             </div>
-            
+
             <div class="form-group">
                 <label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
                 {{ form.password }}
-                {% if form.password.errors %}
-                    <div class="field-error">
-                        {% for error in form.password.errors %}
-                            <span class="error-text">{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
+                {% with field=form.password %}
+                    {% include "atleta_app/partials/field_errors.html" %}
+                {% endwith %}
             </div>
-            
+
             <button type="submit" class="auth-btn">Entrar</button>
         </form>
         
@@ -58,4 +41,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
