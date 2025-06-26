@@ -8,6 +8,14 @@
         min-height: 100vh;
     }
 </style>
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('input[name="cpf"]').forEach(function(input) {
+    input.classList.add('cpf-input');
+    if (window.applyCpfMask) window.applyCpfMask(input);
+  });
+});
+</script>
 {% endblock %}
 
 {% block content %}
