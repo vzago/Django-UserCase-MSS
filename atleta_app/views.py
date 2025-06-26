@@ -85,17 +85,45 @@ def cadastrarAtleta(request):
 # Visualizar Atleta
 @login_required
 def visualizarAtleta(request):
-    cpf = request.GET.get('cpf')
-    atleta = None
+    cpf = request.GET.get('cpf', '').strip()
+    nome = request.GET.get('nome', '').strip()
+    clube = request.GET.get('clube', '').strip()
+    posicao = request.GET.get('posicao', '').strip()
+
+    atletas = Atleta.objects.all()
     error_message = None
 
-    # Verifica se foi informado um CPF
+    # Filtro por CPF (busca exata, prioridade)
     if cpf:
         try:
             atleta = Atleta.objects.get(cpf=cpf)
+            # Se encontrou por CPF, mostra só ele
+            return render(request, 'atleta_app/visualizarAtleta.html', {
+                'atletas': [atleta],
+                'cpf': cpf,
+                'nome': nome,
+                'clube': clube,
+                'posicao': posicao,
+                'error_message': error_message
+            })
         except Atleta.DoesNotExist:
             error_message = 'Atleta não encontrado. Verifique o CPF digitado.'
-            
-    # Se não foi informado um CPF, exibe a mensagem de erro
-    return render(request, 'atleta_app/visualizarAtleta.html', {'atleta': atleta, 'error_message': error_message})
+            atletas = Atleta.objects.none()
+    else:
+        # Filtros parciais
+        if nome:
+            atletas = atletas.filter(nome__icontains=nome)
+        if clube:
+            atletas = atletas.filter(clube__icontains=clube)
+        if posicao:
+            atletas = atletas.filter(posicao__icontains=posicao)
+
+    return render(request, 'atleta_app/visualizarAtleta.html', {
+        'atletas': atletas,
+        'cpf': cpf,
+        'nome': nome,
+        'clube': clube,
+        'posicao': posicao,
+        'error_message': error_message
+    })
     
