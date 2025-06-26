@@ -67,7 +67,7 @@
         }
         input.addEventListener('input', maskHandler);
         input.addEventListener('keypress', function(e) {
-            if (!/[0-9]/.test(e.key)) e.preventDefault();
+            if (!/\d/.test(e.key)) e.preventDefault();
         });
     };
     </script>
