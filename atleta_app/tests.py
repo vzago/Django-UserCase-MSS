@@ -2,6 +2,8 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Atleta
+from .forms import AtletaForm, UserRegistrationForm, UserLoginForm
+from django.core.cache import cache
 
 # Test credentials - these are safe for testing purposes
 # nosonar: hardcoded-credentials
@@ -366,3 +368,324 @@ class AuthExtraTests(TestCase):
         response = self.client.post(reverse('logout'))
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('home'), response.url)
+
+class FormTests(TestCase):
+    """Testes específicos para cobrir as linhas não cobertas dos formulários"""
+    
+    def test_atleta_form_cpf_invalido_digitos_insuficientes(self):
+        """Testa CPF com menos de 11 dígitos"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '123.456.789',  # Menos de 11 dígitos
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('CPF deve ter 11 dígitos', str(form.errors))
+
+    def test_atleta_form_cpf_todos_digitos_iguais(self):
+        """Testa CPF com todos os dígitos iguais"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '111.111.111-11',  # Todos dígitos iguais
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('CPF inválido', str(form.errors))
+
+    def test_atleta_form_cpf_primeiro_digito_verificador_invalido(self):
+        """Testa CPF com primeiro dígito verificador inválido"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '123.456.789-01',  # Primeiro dígito verificador inválido
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('CPF inválido', str(form.errors))
+
+    def test_atleta_form_cpf_segundo_digito_verificador_invalido(self):
+        """Testa CPF com segundo dígito verificador inválido"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '123.456.789-10',  # Segundo dígito verificador inválido
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('CPF inválido', str(form.errors))
+
+    def test_atleta_form_cpf_valido_formatado(self):
+        """Testa CPF válido e verifica se retorna formatado"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '39053344705',  # CPF válido sem formatação
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['cpf'], '390.533.447-05')
+
+    def test_atleta_form_cpf_resto_menor_2_primeiro_digito(self):
+        """Testa CPF onde resto < 2 para primeiro dígito verificador"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '111.444.777-35',  # CPF que resulta em resto < 2
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['cpf'], '111.444.777-35')
+
+    def test_atleta_form_cpf_resto_menor_2_segundo_digito(self):
+        """Testa CPF onde resto < 2 para segundo dígito verificador"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '111.444.777-35',  # CPF que resulta em resto < 2 para segundo dígito
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['cpf'], '111.444.777-35')
+
+    def test_atleta_form_cpf_resto_maior_igual_2_segundo_digito(self):
+        """Testa CPF onde resto >= 2 para segundo dígito verificador"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '123.456.789-09',  # CPF que resulta em resto >= 2 para segundo dígito
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertTrue(form.is_valid())
+        self.assertEqual(form.cleaned_data['cpf'], '123.456.789-09')
+
+    def test_atleta_form_cpf_segundo_digito_verificador_invalido_2(self):
+        """Testa CPF que falha especificamente no segundo dígito verificador (linha 48 forms.py)"""
+        form = AtletaForm(data={
+            'nome': 'Teste',
+            'cpf': '390.533.447-04',  # Segundo dígito verificador inválido
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn('CPF inválido', str(form.errors))
+
+    def test_user_registration_form_init(self):
+        """Testa a inicialização do UserRegistrationForm"""
+        form = UserRegistrationForm()
+        self.assertEqual(form.fields['password1'].label, 'Senha')
+        self.assertEqual(form.fields['password2'].label, 'Confirmar Senha')
+        self.assertIn('password_mismatch', form.fields['password2'].error_messages)
+
+    def test_user_login_form_init(self):
+        """Testa a inicialização do UserLoginForm"""
+        form = UserLoginForm()
+        self.assertEqual(form.fields['username'].label, 'Usuário')
+        self.assertEqual(form.fields['password'].label, 'Senha')
+
+class ViewExtraTests(TestCase):
+    """Testes específicos para cobrir as linhas não cobertas das views"""
+    
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username=TEST_USERNAME, 
+            password=TEST_PRSWRD
+        )
+
+    def test_home_view_cache(self):
+        """Testa se a view home usa cache corretamente"""
+        # Primeira requisição (sem cache)
+        response1 = self.client.get(reverse('home'))
+        self.assertEqual(response1.status_code, 200)
+        
+        # Segunda requisição (com cache)
+        response2 = self.client.get(reverse('home'))
+        self.assertEqual(response2.status_code, 200)
+
+    def test_login_view_user_authenticated(self):
+        """Testa login quando usuário já está autenticado"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        response = self.client.get(reverse('login'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('home'), response.url)
+
+    def test_register_view_user_authenticated(self):
+        """Testa registro quando usuário já está autenticado"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        response = self.client.get(reverse('register'))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('home'), response.url)
+
+    def test_cadastrar_atleta_get_request(self):
+        """Testa GET request para cadastrar atleta"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        response = self.client.get(reverse('cadastrarAtleta'))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Cadastrar Atleta')
+
+    def test_estatisticas_view_cache(self):
+        """Testa se a view de estatísticas usa cache corretamente"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        
+        # Primeira requisição (sem cache)
+        response1 = self.client.get(reverse('estatisticas'))
+        self.assertEqual(response1.status_code, 200)
+        
+        # Segunda requisição (com cache)
+        response2 = self.client.get(reverse('estatisticas'))
+        self.assertEqual(response2.status_code, 200)
+
+    def test_login_view_post_invalid_form(self):
+        """Testa login com formulário inválido"""
+        response = self.client.post(reverse('login'), {
+            'username': '',  # Campo obrigatório vazio
+            'password': ''
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Este campo é obrigatório')
+
+    def test_register_view_post_invalid_form(self):
+        """Testa registro com formulário inválido"""
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser2',
+            'first_name': 'Test',
+            'last_name': 'User',
+            'email': 'invalid-email',  # Email inválido
+            'password1': 'testpass123',
+            'password2': 'testpass123'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Informe um endereço de email válido')
+
+    def test_login_view_post_valid_form_wrong_credentials(self):
+        """Testa login com formulário válido mas credenciais erradas"""
+        response = self.client.post(reverse('login'), {
+            'username': 'wronguser',
+            'password': 'wrongpass'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Usuário ou senha incorretos')
+
+    def test_login_view_post_valid_form_wrong_credentials_2(self):
+        """Testa login com formulário válido mas credenciais erradas (linha 49 views.py)"""
+        response = self.client.post(reverse('login'), {
+            'username': 'testuser',
+            'password': 'senhaerrada'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Usuário ou senha incorretos')
+
+    def test_cadastrar_atleta_post_invalid_form(self):
+        """Testa cadastro de atleta com formulário inválido"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        response = self.client.post(reverse('cadastrarAtleta'), {
+            'nome': '',  # Campo obrigatório vazio
+            'cpf': '390.533.447-05',
+            'idade': 25,
+            'altura': 1.80,
+            'clube': 'Teste',
+            'peso': 75.0,
+            'posicao': 'Teste',
+            'numeroTotalDeJogos': 10,
+            'numeroDeJogosComoTitular': 5,
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Este campo é obrigatório')
+
+    def test_cadastrar_atleta_post_invalid_form_2(self):
+        """Testa cadastro de atleta com formulário inválido (linha 76 views.py)"""
+        self.client.login(username=TEST_USERNAME, password=TEST_PRSWRD)
+        response = self.client.post(reverse('cadastrarAtleta'), {
+            'nome': '',  # Campo obrigatório vazio
+            'cpf': '',
+            'idade': '',
+            'altura': '',
+            'clube': '',
+            'peso': '',
+            'posicao': '',
+            'numeroTotalDeJogos': '',
+            'numeroDeJogosComoTitular': '',
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Este campo é obrigatório')
+
+class ModelExtraTests(TestCase):
+    """Testes específicos para cobrir as linhas não cobertas dos modelos"""
+    
+    def test_atleta_str_method(self):
+        """Testa o método __str__ do modelo Atleta"""
+        atleta = Atleta.objects.create(
+            nome='Teste Atleta',
+            cpf='390.533.447-05',
+            idade=25,
+            altura=1.80,
+            clube='Teste',
+            peso=75.0,
+            posicao='Teste',
+            numeroTotalDeJogos=10,
+            numeroDeJogosComoTitular=5,
+        )
+        self.assertEqual(str(atleta), 'Teste Atleta')
+
+    def test_atleta_registrar_atleta_method(self):
+        """Testa o método registrar_atleta"""
+        atleta = Atleta(
+            nome='Teste Atleta',
+            cpf='390.533.447-05',
+            idade=25,
+            altura=1.80,
+            clube='Teste',
+            peso=75.0,
+            posicao='Teste',
+            numeroTotalDeJogos=10,
+            numeroDeJogosComoTitular=5,
+        )
+        atleta.registrar_atleta()
+        self.assertTrue(Atleta.objects.filter(nome='Teste Atleta').exists())
