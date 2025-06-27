@@ -396,7 +396,7 @@ class FormTests(TestCase):
         """Testa CPF com todos os dígitos iguais"""
         form = AtletaForm(data={
             'nome': 'Teste',
-            'cpf': '111.111.111-11',  # Todos dígitos iguais
+            'cpf': '111.111.111-11',
             'idade': 25,
             'altura': 1.80,
             'clube': 'Teste',
