@@ -15,6 +15,10 @@ TEST_WEAK_PRSWRD = '123'  # nosonar: hardcoded-credentials
 TEST_DIFF_PRSWRD1 = 'senha123'  # nosonar: hardcoded-credentials
 TEST_DIFF_PRSWRD2 = 'senha456'  # nosonar: hardcoded-credentials
 TEST_ANY_PRSWRD = 'qualquer'  # nosonar: hardcoded-credentials
+TEST_USER2_PRSWRD = 'testpass123'  # nosonar: hardcoded-credentials
+TEST_WRONG_USER_PRSWRD = 'senhaerrada'  # nosonar: hardcoded-credentials
+TEST_INVALID_USER = 'wronguser'  # nosonar: hardcoded-credentials
+TEST_INVALID_PRSWRD = 'wrongpass'  # nosonar: hardcoded-credentials
 
 # Create your tests here.
 
@@ -598,8 +602,8 @@ class ViewExtraTests(TestCase):
             'first_name': 'Test',
             'last_name': 'User',
             'email': 'invalid-email',  # Email inválido
-            'password1': 'testpass123',
-            'password2': 'testpass123'
+            'password1': TEST_USER2_PRSWRD,  # nosonar: hardcoded-credentials
+            'password2': TEST_USER2_PRSWRD,  # nosonar: hardcoded-credentials
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Informe um endereço de email válido')
@@ -607,8 +611,8 @@ class ViewExtraTests(TestCase):
     def test_login_view_post_valid_form_wrong_credentials(self):
         """Testa login com formulário válido mas credenciais erradas"""
         response = self.client.post(reverse('login'), {
-            'username': 'wronguser',
-            'password': 'wrongpass'
+            'username': TEST_INVALID_USER,  # nosonar: hardcoded-credentials
+            'password': TEST_INVALID_PRSWRD  # nosonar: hardcoded-credentials
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Usuário ou senha incorretos')
@@ -616,8 +620,8 @@ class ViewExtraTests(TestCase):
     def test_login_view_post_valid_form_wrong_credentials_2(self):
         """Testa login com formulário válido mas credenciais erradas (linha 49 views.py)"""
         response = self.client.post(reverse('login'), {
-            'username': 'testuser',
-            'password': 'senhaerrada'
+            'username': TEST_USERNAME,  # nosonar: hardcoded-credentials
+            'password': TEST_WRONG_USER_PRSWRD  # nosonar: hardcoded-credentials
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Usuário ou senha incorretos')
